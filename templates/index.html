@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block titulo %}Catálogo — Tienda Online{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Catálogo de Productos</h1>
+
+    <div class="row">
+        {% for producto in productos %}
+        <!-- RESPONSIVE: 12 columnas (celular), 6 (tablet), 4 (PC) -->
+        <div class="col-12 col-sm-6 col-lg-4 mb-4">
+            
+            <!-- Se agregó la clase 'card-futurista' y 'overflow-hidden' -->
+            <div class="card h-100 card-futurista overflow-hidden">
+                
+                <img src="{{ url_for('static', filename='uploads/' + producto.imagen) }}" 
+                     class="card-img-top" alt="{{ producto.nombre }}"
+                     style="height: 200px; object-fit: cover;"> <!-- Altura uniforme -->
+                
+                <!-- Flexbox para empujar botones abajo ('d-flex flex-column') -->
+                <div class="card-body d-flex flex-column"> 
+                    <span class="badge border border-info text-info mb-2 align-self-start">{{ producto.tipo | upper }}</span>
+                    <h5 class="card-title fw-bold">{{ producto.nombre }}</h5>
+                    <p class="card-text text-muted mb-1"><i class="bi bi-upc-scan"></i> Código: {{ producto.codigo }}</p>
+                    
+                    <!-- Color Neón para el precio empujado hacia abajo ('mt-auto') -->
+                    <p class="card-text fs-4 fw-bold precio-neon mt-auto">
+                        ${{ "%.2f"|format(producto.precio_final()) }}
+                    </p>
+                    
+                    <div class="d-flex gap-2">
+                        <!-- Cambio visual en botones con íconos de Bootstrap -->
+                        <a href="{{ url_for('detalle_producto', producto_id=producto.id) }}"
+                           class="btn btn-outline-light flex-grow-1">
+                            <i class="bi bi-eye"></i> Detalle
+                        </a>
+                        {% if session.get('usuario_rol') == 'cliente' %}
+                        <form action="{{ url_for('agregar_carrito', producto_id=producto.id) }}" method="POST">
+                            <button type="submit" class="btn btn-primary" title="Agregar al carrito">
+                                <i class="bi bi-cart-plus"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p class="text-center text-muted">No hay productos disponibles todavía.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

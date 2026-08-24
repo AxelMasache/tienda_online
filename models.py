@@ -1,0 +1,126 @@
+"""
+models.py
+─────────
+Aquí viven las clases que representan las tablas de la base de datos.
+
+En lugar de heredar de ABC como en clases anteriores, ahora heredamos
+de db.Model (de SQLAlchemy). SQLAlchemy tiene su propio mecanismo de
+herencia para tablas — funciona con el MISMO concepto de POO que ya
+conocen: una clase Padre, clases Hijas que la extienden, y Python
+decidiendo automáticamente cuál usar según el tipo real del objeto.
+"""
+
+from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+
+db = SQLAlchemy()
+
+
+# ══════════════════════════════════════════════════════════════
+# USUARIO
+# ══════════════════════════════════════════════════════════════
+
+class Usuario(db.Model):
+    __tablename__ = "usuarios"
+
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    rol = db.Column(db.String(20), nullable=False, default="cliente")
+    fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def set_password(self, password_plano):
+        self.password_hash = generate_password_hash(password_plano)
+
+    def check_password(self, password_plano):
+        return check_password_hash(self.password_hash, password_plano)
+
+    def es_admin(self):
+        return self.rol == "admin"
+
+    def __repr__(self):
+        return f"<Usuario {self.email} ({self.rol})>"
+
+
+# ══════════════════════════════════════════════════════════════
+# PRODUCTO  jerarqua con herencia polimrfica
+# ══════════════════════════════════════════════════════════════
+
+class Producto(db.Model):
+    __tablename__ = "productos"
+
+    id = db.Column(db.Integer, primary_key=True)
+    codigo = db.Column(db.String(20), unique=True, nullable=False)
+    nombre = db.Column(db.String(150), nullable=False)
+    precio_base = db.Column(db.Float, nullable=False)
+    stock = db.Column(db.Integer, default=0)
+    activo = db.Column(db.Boolean, default=True)
+    #Campo para almacenar la ruta de la imagen del producto, con un valor por defecto
+    imagen = db.Column(db.String(255), nullable=True, default='default.jpg')
+
+    # Columnas exclusivas de ProductoFisico (quedan NULL en otros tipos)
+    peso_kg = db.Column(db.Float, nullable=True)
+    costo_envio_por_kg = db.Column(db.Float, nullable=True)
+
+    # Columnas exclusivas de ProductoDigital
+    licencia = db.Column(db.String(20), nullable=True)
+
+    # Columnas exclusivas de ProductoPerecible
+    dias_para_vencer = db.Column(db.Integer, nullable=True)
+
+    # Columna discriminadora: le dice a SQLAlchemy qué clase usar
+    tipo = db.Column(db.String(30))
+
+    __mapper_args__ = {
+        "polymorphic_identity": "producto",
+        "polymorphic_on": tipo,
+    }
+
+    def precio_final(self):
+        return self.precio_base
+
+    def ficha(self):
+        return (f"[{self.codigo}] {self.nombre} "
+                f"| Precio final: ${self.precio_final():.2f} "
+                f"| Stock: {self.stock}")
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__} {self.codigo} - {self.nombre}>"
+
+
+class ProductoFisico(Producto):
+    __mapper_args__ = {"polymorphic_identity": "fisico"}
+
+    def precio_final(self):
+        envio = (self.peso_kg or 0) * (self.costo_envio_por_kg or 0)
+        return self.precio_base + envio
+
+
+class ProductoDigital(Producto):
+    __mapper_args__ = {"polymorphic_identity": "digital"}
+
+    MULTIPLICADORES = {
+        "personal": 1.0,
+        "comercial": 2.5,
+        "educativa": 0.6,
+    }
+
+    def precio_final(self):
+        multiplicador = self.MULTIPLICADORES.get(self.licencia, 1.0)
+        return self.precio_base * multiplicador
+
+
+class ProductoPerecible(Producto):
+    __mapper_args__ = {"polymorphic_identity": "perecible"}
+
+    def precio_final(self):
+        dias = self.dias_para_vencer
+        if dias is None:
+            return self.precio_base
+        if dias <= 3:
+            return self.precio_base * 0.50
+        elif dias <= 7:
+            return self.precio_base * 0.80
+        return self.precio_base
