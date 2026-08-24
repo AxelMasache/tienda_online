@@ -49,6 +49,11 @@ Imágenes
 Catálogo de productos
 ![image alt](https://github.com/AxelMasache/tienda_online/blob/36e35f2fa2b2b9d6189b31827b822648371deb3b/Catalogo_TiendaOnline_Masache_Axel.png)
 
-
+Ver Detalle producto
  ![image alt](https://github.com/AxelMasache/tienda_online/blob/a35d20edb9ad27f696cfeb92d1998ecbb002d4ed/Ver_Detalle_Producto_Masache_Axel.png)
 
+Agregar Carrito
+![image alt](https://github.com/AxelMasache/tienda_online/blob/43112bb4bd7ba8a569c008819d486e29f94fb33f/Agregar_Carrito_Masache_Axel.png)
+
+Mi Carrito
+![image alt]()
