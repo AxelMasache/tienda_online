@@ -50,4 +50,5 @@ Catálogo de productos
 ![image alt](https://github.com/AxelMasache/tienda_online/blob/36e35f2fa2b2b9d6189b31827b822648371deb3b/Catalogo_TiendaOnline_Masache_Axel.png)
 
 
+ ![image alt](https://github.com/AxelMasache/tienda_online/blob/a35d20edb9ad27f696cfeb92d1998ecbb002d4ed/Ver_Detalle_Producto_Masache_Axel.png)
 
