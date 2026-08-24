@@ -6,7 +6,7 @@ Una aplicación web construida con Flask y PostgreSQL para la gestión y venta d
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone 
+   git clone <https://github.com/AxelMasache/tienda_online.git>
    cd tienda_online
 
 2.Crear y activar el entorno virtual:
