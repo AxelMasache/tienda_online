@@ -56,4 +56,4 @@ Agregar Carrito
 ![image alt](https://github.com/AxelMasache/tienda_online/blob/43112bb4bd7ba8a569c008819d486e29f94fb33f/Agregar_Carrito_Masache_Axel.png)
 
 Mi Carrito
-![image alt]()
+![image alt](https://github.com/AxelMasache/tienda_online/blob/c96f3e872116c08dd94416d71ec0d90e177f70d0/Mi_Carrito_Masache_Axel.png)
