@@ -45,5 +45,9 @@ Email: cliente@tienda.com (Cámbialo por el tuyo de prueba)
 
 Contraseña: cliente123
 
+Imágenes 
+Catálogo de productos
+![image alt](https://github.com/AxelMasache/tienda_online/blob/36e35f2fa2b2b9d6189b31827b822648371deb3b/Catalogo_TiendaOnline_Masache_Axel.png)
+
 
 
